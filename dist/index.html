@@ -49,7 +49,8 @@
     const sitePassword=document.getElementById('sitePassword');
     const passwordError=document.getElementById('passwordError');
     const accessCookie=document.cookie.split('; ').some(x=>x==='siteAccessGranted=true');
-    if(localStorage.getItem('siteAccessGranted')==='true'||accessCookie)passwordGate.remove();
+    let accessStored=false;try{accessStored=localStorage.getItem('siteAccessGranted')==='true'}catch(_){}
+    if(accessStored||accessCookie)passwordGate.remove();
     passwordForm.addEventListener('submit',e=>{e.preventDefault();if(sitePassword.value==='Hebel2026'){try{localStorage.setItem('siteAccessGranted','true')}catch(_){}document.cookie='siteAccessGranted=true; Max-Age=2592000; Path=/; SameSite=Lax';passwordGate.remove();}else{passwordError.textContent='Falsches Passwort – versucht es erneut.';sitePassword.select();}});
   </script>
   <script>
