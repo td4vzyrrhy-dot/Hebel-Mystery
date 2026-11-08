@@ -48,7 +48,8 @@
     const passwordForm=document.getElementById('passwordForm');
     const sitePassword=document.getElementById('sitePassword');
     const passwordError=document.getElementById('passwordError');
-    passwordForm.addEventListener('submit',e=>{e.preventDefault();if(sitePassword.value==='Hebel2026'){passwordGate.remove();}else{passwordError.textContent='Falsches Passwort – versucht es erneut.';sitePassword.select();}});
+    if(localStorage.getItem('siteAccessGranted')==='true')passwordGate.remove();
+    passwordForm.addEventListener('submit',e=>{e.preventDefault();if(sitePassword.value==='Hebel2026'){localStorage.setItem('siteAccessGranted','true');passwordGate.remove();}else{passwordError.textContent='Falsches Passwort – versucht es erneut.';sitePassword.select();}});
   </script>
   <script>
     const navEntry=performance.getEntriesByType('navigation')[0];if(navEntry&&navEntry.type==='reload'){['boardUnlocked','mission1Solved','mission2Solved','mission3Solved','mission4Solved','mission5Solved','mission6Solved','mission7Solved','mission8Solved','mission9Solved'].forEach(k=>localStorage.removeItem(k));}
