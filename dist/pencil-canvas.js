@@ -34,6 +34,21 @@
         button.style.margin = '12px 8px 0 0';
       });
       if (tools) tools.style.display = 'none';
+      canvasFrame.style.userSelect = 'none';
+      canvasFrame.style.webkitUserSelect = 'none';
+      canvasFrame.style.webkitTouchCallout = 'none';
+      ['contextmenu', 'copy', 'cut', 'paste', 'dragstart', 'selectstart'].forEach(function (name) {
+        canvasFrame.addEventListener(name, function (event) {
+          event.preventDefault();
+          event.stopPropagation();
+        }, { passive: false });
+      });
+      canvasFrame.addEventListener('keydown', function (event) {
+        if ((event.ctrlKey || event.metaKey) && ['a', 'c', 'v', 'x'].includes(event.key.toLowerCase())) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+      }, { passive: false });
     }
 
     function resize() {
