@@ -16,6 +16,8 @@
     let mode = 'pen';
     let active = false;
     let activePointer = null;
+    let pointerEventsSeen = false;
+    let touchId = null;
     let moved = false;
     let last = null;
     let dpr = 1;
@@ -64,6 +66,7 @@
     canvas.style.webkitUserSelect = 'none';
     canvas.style.webkitTouchCallout = 'none';
     canvas.addEventListener('pointerdown', function (event) {
+      pointerEventsSeen = true;
       // A palm is reported as a touch contact. Apple Pencil input remains pen input.
       if (event.pointerType === 'touch') { event.preventDefault(); event.stopImmediatePropagation(); return; }
       event.preventDefault();
@@ -96,6 +99,48 @@
     canvas.addEventListener('pointermove', move, { capture: true, passive: false });
     ['pointerup', 'pointercancel'].forEach(function (name) {
       canvas.addEventListener(name, function (event) { event.preventDefault(); event.stopImmediatePropagation(); finish(event); }, { capture: true, passive: false });
+    });
+    function touchPoint(touch) {
+      return point({ clientX: touch.clientX, clientY: touch.clientY });
+    }
+    function pencilTouch(touch) {
+      const radius = Math.max(touch.radiusX || 0, touch.radiusY || 0);
+      return radius === 0 || radius < 24 || touch.touchType === 'stylus';
+    }
+    canvas.addEventListener('touchstart', function (event) {
+      if (pointerEventsSeen || !event.changedTouches.length) return;
+      const touch = event.changedTouches[0];
+      if (!pencilTouch(touch)) return;
+      event.preventDefault();
+      const p = touchPoint(touch);
+      active = true;
+      touchId = touch.identifier;
+      moved = false;
+      last = p;
+      drawDot(last);
+      document.documentElement.classList.add('pencil-writing');
+    }, { passive: false });
+    canvas.addEventListener('touchmove', function (event) {
+      if (pointerEventsSeen || !active) return;
+      const touch = Array.from(event.touches).find(function (item) { return item.identifier === touchId; });
+      if (!touch) return;
+      event.preventDefault();
+      const next = touchPoint(touch);
+      if (Math.abs(next.x - last.x) + Math.abs(next.y - last.y) > 0.05) {
+        drawSegment(last, next);
+        moved = true;
+        last = next;
+      }
+    }, { passive: false });
+    ['touchend', 'touchcancel'].forEach(function (name) {
+      canvas.addEventListener(name, function (event) {
+        if (pointerEventsSeen || !active) return;
+        event.preventDefault();
+        active = false;
+        touchId = null;
+        last = null;
+        document.documentElement.classList.remove('pencil-writing');
+      }, { passive: false });
     });
     if (pen) pen.onclick = function () { mode = 'pen'; pen.classList.add('active'); if (eraser) eraser.classList.remove('active'); };
     if (eraser) eraser.onclick = function () { mode = 'eraser'; eraser.classList.add('active'); if (pen) pen.classList.remove('active'); };
