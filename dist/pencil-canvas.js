@@ -1,8 +1,13 @@
 (function () {
   'use strict';
   function setup() {
-    const canvas = document.getElementById('paper');
+    let canvas = document.getElementById('paper');
     if (!canvas || canvas.dataset.pencilReady) return;
+    // Replace the original canvas so the legacy mission handlers cannot
+    // compete with this input path and swallow Pencil events.
+    const cleanCanvas = canvas.cloneNode(false);
+    canvas.replaceWith(cleanCanvas);
+    canvas = cleanCanvas;
     canvas.dataset.pencilReady = 'true';
     const ctx = canvas.getContext('2d', { alpha: false });
     const pen = document.getElementById('pen');
