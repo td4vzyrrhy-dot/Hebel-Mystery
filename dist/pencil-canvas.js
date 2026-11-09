@@ -99,7 +99,9 @@
       // touch contacts as Pencil input and reject only broad palm contacts.
       if (event.pointerType === 'touch') {
         const contactSize = Math.max(event.width || 0, event.height || 0);
-        if (contactSize > 24) { event.preventDefault(); event.stopImmediatePropagation(); return; }
+        // Pencil contacts can briefly report a larger footprint while changing
+        // direction. Only reject clearly palm-sized contacts.
+        if (contactSize > 50 && event.touchType !== 'stylus') { event.preventDefault(); event.stopImmediatePropagation(); return; }
       }
       pointerEventsSeen = true;
       event.preventDefault();
