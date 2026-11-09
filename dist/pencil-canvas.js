@@ -70,7 +70,7 @@
       canvas.setPointerCapture(event.pointerId);
       document.documentElement.classList.add('pencil-writing');
     }, { capture: true, passive: false });
-    canvas.addEventListener('pointermove', function (event) {
+    function move(event) {
       if (!active || event.pointerId !== activePointer) return;
       event.preventDefault();
       event.stopImmediatePropagation();
@@ -83,8 +83,11 @@
           last = next;
         }
       });
-    }, { capture: true, passive: false });
-    ['pointerup', 'pointercancel', 'pointerleave'].forEach(function (name) {
+    }
+    // pointerrawupdate reduces latency on Apple Pencil; pointermove remains the fallback.
+    canvas.addEventListener('pointerrawupdate', move, { capture: true, passive: false });
+    canvas.addEventListener('pointermove', move, { capture: true, passive: false });
+    ['pointerup', 'pointercancel'].forEach(function (name) {
       canvas.addEventListener(name, function (event) { event.preventDefault(); event.stopImmediatePropagation(); finish(event); }, { capture: true, passive: false });
     });
     if (pen) pen.onclick = function () { mode = 'pen'; pen.classList.add('active'); if (eraser) eraser.classList.remove('active'); };
