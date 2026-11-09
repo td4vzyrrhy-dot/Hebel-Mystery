@@ -72,6 +72,8 @@
       activePointer = event.pointerId;
       moved = false;
       last = point(event);
+      // Paint immediately on contact so slow writing never feels delayed.
+      drawDot(last);
       canvas.setPointerCapture(event.pointerId);
       document.documentElement.classList.add('pencil-writing');
     }, { capture: true, passive: false });
