@@ -37,6 +37,7 @@
       canvasFrame.style.userSelect = 'none';
       canvasFrame.style.webkitUserSelect = 'none';
       canvasFrame.style.webkitTouchCallout = 'none';
+      canvasFrame.style.touchAction = 'none';
       ['contextmenu', 'copy', 'cut', 'paste', 'dragstart', 'selectstart'].forEach(function (name) {
         canvasFrame.addEventListener(name, function (event) {
           event.preventDefault();
@@ -87,6 +88,7 @@
       activePointer = null;
       last = null;
       document.documentElement.classList.remove('pencil-writing');
+      document.body.style.overflow = '';
       if (event && canvas.hasPointerCapture(event.pointerId)) canvas.releasePointerCapture(event.pointerId);
     }
     canvas.style.touchAction = 'none';
@@ -114,6 +116,7 @@
       drawDot(last);
       canvas.setPointerCapture(event.pointerId);
       document.documentElement.classList.add('pencil-writing');
+      document.body.style.overflow = 'hidden';
     }, { capture: true, passive: false });
     function move(event) {
       if (!active || event.pointerId !== activePointer) return;
@@ -154,6 +157,7 @@
       last = p;
       drawDot(last);
       document.documentElement.classList.add('pencil-writing');
+      document.body.style.overflow = 'hidden';
     }, { passive: false });
     canvas.addEventListener('touchmove', function (event) {
       if (pointerEventsSeen || !active) return;
@@ -175,6 +179,7 @@
         touchId = null;
         last = null;
         document.documentElement.classList.remove('pencil-writing');
+        document.body.style.overflow = '';
       }, { passive: false });
     });
     if (pen) pen.onclick = function () { mode = 'pen'; pen.classList.add('active'); if (eraser) eraser.classList.remove('active'); };
