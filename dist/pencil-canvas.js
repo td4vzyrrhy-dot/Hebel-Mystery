@@ -102,7 +102,7 @@
         if (contactSize > 24) { event.preventDefault(); event.stopImmediatePropagation(); return; }
       }
       pointerEventsSeen = true;
-      if (event.type !== 'pointerrawupdate') event.preventDefault();
+      event.preventDefault();
       event.stopImmediatePropagation();
       active = true;
       activePointer = event.pointerId;
@@ -127,8 +127,8 @@
         }
       });
     }
-    // pointerrawupdate reduces latency on Apple Pencil; pointermove remains the fallback.
-    canvas.addEventListener('pointerrawupdate', move, { capture: true, passive: false });
+    // Use one stable stream only. Safari can otherwise interleave raw and normal
+    // pointer events, which makes alternating short strokes disappear.
     canvas.addEventListener('pointermove', move, { capture: true, passive: false });
     ['pointerup', 'pointercancel'].forEach(function (name) {
       canvas.addEventListener(name, function (event) { event.preventDefault(); event.stopImmediatePropagation(); finish(event); }, { capture: true, passive: false });
