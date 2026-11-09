@@ -66,8 +66,12 @@
     canvas.style.webkitUserSelect = 'none';
     canvas.style.webkitTouchCallout = 'none';
     canvas.addEventListener('pointerdown', function (event) {
-      // A palm is reported as a touch contact. Apple Pencil input remains pen input.
-      if (event.pointerType === 'touch') { event.preventDefault(); event.stopImmediatePropagation(); return; }
+      // Safari on iPad can report Apple Pencil as a touch pointer. Treat small
+      // touch contacts as Pencil input and reject only broad palm contacts.
+      if (event.pointerType === 'touch') {
+        const contactSize = Math.max(event.width || 0, event.height || 0);
+        if (contactSize > 24) { event.preventDefault(); event.stopImmediatePropagation(); return; }
+      }
       pointerEventsSeen = true;
       if (event.type !== 'pointerrawupdate') event.preventDefault();
       event.stopImmediatePropagation();
