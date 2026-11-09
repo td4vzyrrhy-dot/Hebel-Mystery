@@ -66,9 +66,9 @@
     canvas.style.webkitUserSelect = 'none';
     canvas.style.webkitTouchCallout = 'none';
     canvas.addEventListener('pointerdown', function (event) {
-      pointerEventsSeen = true;
       // A palm is reported as a touch contact. Apple Pencil input remains pen input.
       if (event.pointerType === 'touch') { event.preventDefault(); event.stopImmediatePropagation(); return; }
+      pointerEventsSeen = true;
       if (event.type !== 'pointerrawupdate') event.preventDefault();
       event.stopImmediatePropagation();
       active = true;
