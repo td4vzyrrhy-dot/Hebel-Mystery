@@ -9,7 +9,7 @@
     canvas.replaceWith(cleanCanvas);
     canvas = cleanCanvas;
     canvas.dataset.pencilReady = 'true';
-    const ctx = canvas.getContext('2d', { alpha: false });
+    const ctx = canvas.getContext('2d', { alpha: false, desynchronized: true });
     const pen = document.getElementById('pen');
     const eraser = document.getElementById('eraser');
     const clear = document.getElementById('clear');
@@ -69,7 +69,7 @@
       pointerEventsSeen = true;
       // A palm is reported as a touch contact. Apple Pencil input remains pen input.
       if (event.pointerType === 'touch') { event.preventDefault(); event.stopImmediatePropagation(); return; }
-      event.preventDefault();
+      if (event.type !== 'pointerrawupdate') event.preventDefault();
       event.stopImmediatePropagation();
       active = true;
       activePointer = event.pointerId;
