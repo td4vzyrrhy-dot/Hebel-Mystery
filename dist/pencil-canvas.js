@@ -13,6 +13,7 @@
     const pen = document.getElementById('pen');
     const eraser = document.getElementById('eraser');
     const clear = document.getElementById('clear');
+    const canvasFrame = canvas.closest('.canvas, .canvas-wrap');
     let mode = 'pen';
     let active = false;
     let activePointer = null;
@@ -21,6 +22,12 @@
     let moved = false;
     let last = null;
     let dpr = 1;
+
+    if (clear && canvasFrame) {
+      canvasFrame.after(clear);
+      clear.style.display = 'block';
+      clear.style.margin = '12px 0 0 auto';
+    }
 
     function resize() {
       const rect = canvas.getBoundingClientRect();
