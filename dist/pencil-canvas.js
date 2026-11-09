@@ -14,6 +14,7 @@
     const eraser = document.getElementById('eraser');
     const clear = document.getElementById('clear');
     const canvasFrame = canvas.closest('.canvas, .canvas-wrap');
+    const tools = canvas.closest('.panel')?.querySelector('.tools');
     let mode = 'pen';
     let active = false;
     let activePointer = null;
@@ -23,10 +24,16 @@
     let last = null;
     let dpr = 1;
 
-    if (clear && canvasFrame) {
-      canvasFrame.after(clear);
-      clear.style.display = 'block';
-      clear.style.margin = '12px 0 0 auto';
+    if (canvasFrame) {
+      if (clear) canvasFrame.after(clear);
+      if (eraser) canvasFrame.after(eraser);
+      if (pen) canvasFrame.after(pen);
+      [pen, eraser, clear].forEach(function (button) {
+        if (!button) return;
+        button.style.display = 'inline-block';
+        button.style.margin = '12px 8px 0 0';
+      });
+      if (tools) tools.style.display = 'none';
     }
 
     function resize() {
